@@ -30,6 +30,10 @@ racket demo.rkt     # step logs for the worked examples
 | `explore.rkt` | step logs, reduction graphs, typing derivations |
 | `demo.rkt` | entry points onto the examples |
 | `span-candidate.rkt` | an alternative design using spans |
+| `render.rkt` | machine states drawn as pictures |
+| `animate.rkt` | a run played as a slideshow |
+| `add1-tree-slides.rkt` | `add1-tree`, one step per slide |
+| `mirror-tree-slides.rkt` | `mirror-tree`, one step per slide |
 
 ## Examples
 
@@ -79,4 +83,24 @@ a stepper, and `show-typing` draws a typing derivation:
 ```racket
 > (trace-program recursive-signatures (sum-tree-program (leaf 4)))
 > (show-typing (term ()) build-seven)
+```
+
+## Animations
+
+`add1-tree-slides.rkt` and `mirror-tree-slides.rkt` animate a run one machine
+step per slide. Each buffer is a lane of cells, with a cursor under the next
+cell a reader will read or a writer will write.
+
+```sh
+racket -l racket/base -e '(dynamic-require (quote slideshow/start) #f)' -- add1-tree-slides.rkt
+```
+
+Or open the file in DrRacket and run it. Put `-x` before the file name to
+export a PDF with one page per step. `film-frame` and `save-pict` in
+`render.rkt` write single frames as PNG or PDF:
+
+```racket
+> (require "render.rkt" "examples.rkt")
+> (define f (run->film recursive-signatures (add1-tree-program sample-tree)))
+> (save-pict (film-frame f 20) "frame.png")
 ```
